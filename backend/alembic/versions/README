@@ -1,0 +1,2 @@
+# Place revision scripts here. Example:
+# alembic revision --autogenerate -m "add users table"
