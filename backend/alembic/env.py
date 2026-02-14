@@ -1,26 +1,23 @@
-"""Alembic env — ready for future MySQL. No models yet."""
+"""Alembic env — MySQL migrations with SQLAlchemy models."""
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+
+from app.config import DATABASE_URL
+from app.models import Base
+
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# No target_metadata yet (no DB models). Add when teammate adds SQLAlchemy models:
-# from app.models import Base
-# target_metadata = Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def get_url():
-    """Future: read from app.config or env. For now placeholder."""
-    import os
-    return os.getenv(
-        "DATABASE_URL",
-        "mysql+pymysql://user:password@localhost:3306/studyconnect"
-    )
+    """Read DATABASE_URL from config."""
+    return DATABASE_URL
 
 
 def run_migrations_offline() -> None:

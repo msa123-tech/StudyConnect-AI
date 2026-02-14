@@ -19,7 +19,11 @@ export default function UniversitySearchModal({ onClose }) {
   }, [onClose])
 
   function handleSelect(college) {
-    const params = new URLSearchParams({ college })
+    const params = new URLSearchParams({
+      college_id: college.id,
+      college: college.name,
+      domain: college.domain,
+    })
     navigate(`/login?${params.toString()}`)
     onClose()
   }

@@ -1,1 +1,1 @@
-# In-memory mock data (replace with DB later)
+# Data layer — use app.models and database for persistence

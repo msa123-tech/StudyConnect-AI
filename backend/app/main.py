@@ -1,4 +1,4 @@
-"""StudyConnect FastAPI app — Phase 1 & 2 auth and multi-college only."""
+"""StudyConnect FastAPI app — Phase 1 & 2 auth and multi-college with MySQL."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -6,8 +6,8 @@ from app.routers import auth_routes, college_routes
 
 app = FastAPI(
     title="StudyConnect API",
-    description="Phase 1 & 2: Auth and multi-college. DB to be plugged later.",
-    version="0.1.0",
+    description="Phase 1 & 2: Auth and multi-college with MySQL persistence.",
+    version="0.2.0",
 )
 
 app.add_middleware(

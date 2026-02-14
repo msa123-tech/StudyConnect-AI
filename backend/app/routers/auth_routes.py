@@ -1,14 +1,11 @@
 """Auth endpoints: login (auto-create user), me (protected)."""
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 from typing import Annotated
 
-from app.data.mock_store import (
-    COLLEGES,
-    create_user,
-    get_college_by_id,
-    get_user_by_email,
-)
+from app.database import get_db
 from app.dependencies import get_current_user
+from app.models import College, User, UserRole
 from app.schemas.auth_schema import LoginRequest, TokenResponse, UserMeResponse
 from app.utils.email_validator import validate_email_domain
 from app.utils.jwt_handler import create_access_token
@@ -18,37 +15,39 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(body: LoginRequest):
+def login(body: LoginRequest, db: Session = Depends(get_db)):
     """
     Validate email matches college domain.
-    If new user → auto create in memory. Hash password, generate JWT.
+    If new user → auto create in DB. Hash password, generate JWT.
     Return token + college name.
     """
     email = body.email.strip().lower()
-    college = get_college_by_id(body.college_id)
+    college = db.query(College).filter(College.id == body.college_id, College.status == True).first()
     if not college:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid college_id",
         )
-    if not validate_email_domain(email, college):
+    if not validate_email_domain(email, {"domain": college.domain}):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Email must end with @{college['domain']}",
+            detail=f"Email must end with @{college.domain}",
         )
 
-    user = get_user_by_email(email)
+    user = db.query(User).filter(User.email == email, User.college_id == body.college_id).first()
     if not user:
-        # Auto-create new user (Phase 2: auto account creation)
         password_hash = hash_password(body.password)
-        user = create_user(email, password_hash, body.college_id)
+        user = User(
+            email=email,
+            hashed_password=password_hash,
+            college_id=body.college_id,
+            role=UserRole.student,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
     else:
-        if user["college_id"] != body.college_id:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email does not belong to this college",
-            )
-        if not verify_password(body.password, user["password_hash"]):
+        if not verify_password(body.password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid password",
@@ -56,22 +55,22 @@ def login(body: LoginRequest):
 
     token = create_access_token(
         data={
-            "user_id": user["user_id"],
-            "college_id": user["college_id"],
-            "email": user["email"],
+            "user_id": user.id,
+            "college_id": user.college_id,
+            "email": user.email,
         }
     )
     return TokenResponse(
         access_token=token,
-        college_name=college["name"],
+        college_name=college.name,
     )
 
 
 @router.get("/me", response_model=UserMeResponse)
-def me(payload: Annotated[dict, Depends(get_current_user)]):
+def me(payload: Annotated[dict, Depends(get_current_user)], db: Session = Depends(get_db)):
     """Protected route. Requires JWT. Returns email, college_id, college_name."""
-    college = get_college_by_id(payload["college_id"])
-    college_name = college["name"] if college else "Unknown"
+    college = db.query(College).filter(College.id == payload["college_id"]).first()
+    college_name = college.name if college else "Unknown"
     return UserMeResponse(
         email=payload["email"],
         college_id=payload["college_id"],

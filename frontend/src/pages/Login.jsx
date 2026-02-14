@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useSearchParams, Link, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { getEmailDomainForCollege } from '../utils/collegeDomains'
+import { login as loginApi } from '../api/client'
+import { setToken } from '../utils/auth'
 
 function Spinner() {
   return (
@@ -20,24 +21,35 @@ function Spinner() {
 
 export default function Login() {
   const [searchParams] = useSearchParams()
-  const collegeParam = searchParams.get('college')?.trim() || ''
-  const [isVerifying, setIsVerifying] = useState(false)
+  const collegeId = searchParams.get('college_id')
+  const collegeName = searchParams.get('college')?.trim() || ''
+  const domain = searchParams.get('domain')?.trim() || ''
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  if (!collegeParam) {
+  if (!collegeId) {
     return <Navigate to="/" replace />
   }
 
-  const displayTitle = `Login to ${collegeParam} StudyConnect`
-  const emailDomain = getEmailDomainForCollege(collegeParam)
-  const domainHint = emailDomain
-    ? `For ${collegeParam}: Must end with @${emailDomain}`
+  const displayTitle = `Login to ${collegeName || 'College'} StudyConnect`
+  const domainHint = domain
+    ? `Must end with @${domain}`
     : 'Use your college email address.'
 
-  function handleContinue() {
-    setIsVerifying(true)
-    setTimeout(() => {
-      setIsVerifying(false)
-    }, 2200)
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+    try {
+      const res = await loginApi(email.trim().toLowerCase(), password, parseInt(collegeId, 10))
+      setToken(res.access_token)
+      window.location.href = '/dashboard'
+    } catch (err) {
+      setError(err.message || 'Login failed')
+      setLoading(false)
+    }
   }
 
   return (
@@ -47,7 +59,8 @@ export default function Login() {
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-violet-500/10 blur-3xl" />
       </div>
 
-      <motion.div
+      <motion.form
+        onSubmit={handleSubmit}
         className="relative w-full max-w-md rounded-2xl border border-white/10 backdrop-blur-sm p-10 shadow-soft-lg"
         style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}
         initial={{ opacity: 0, y: 16 }}
@@ -63,13 +76,17 @@ export default function Login() {
         <div className="mt-8 space-y-4">
           <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3.5">
             <p className="text-xs text-slate-500 uppercase tracking-wider">College</p>
-            <p className="text-white font-medium mt-0.5">{collegeParam}</p>
+            <p className="text-white font-medium mt-0.5">{collegeName}</p>
           </div>
           <div>
             <input
               type="email"
               placeholder="College email"
-              disabled={isVerifying}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              required
+              autoComplete="email"
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder-slate-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 transition-all duration-200 disabled:opacity-60"
             />
             <p className="mt-1.5 text-xs text-slate-500">{domainHint}</p>
@@ -77,20 +94,26 @@ export default function Login() {
           <input
             type="password"
             placeholder="Password"
-            disabled={isVerifying}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
+            required
+            autoComplete="current-password"
             className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder-slate-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 transition-all duration-200 disabled:opacity-60"
           />
+          {error && (
+            <p className="text-sm text-red-400">{error}</p>
+          )}
           <motion.button
-            type="button"
-            onClick={handleContinue}
-            disabled={isVerifying}
+            type="submit"
+            disabled={loading}
             className="w-full rounded-xl bg-white py-3.5 font-semibold text-slate-900 shadow-lg transition-all duration-300 hover:shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)] hover:scale-[1.02] disabled:opacity-80 disabled:pointer-events-none disabled:hover:scale-100 flex items-center justify-center gap-2"
-            whileTap={!isVerifying ? { scale: 0.98 } : {}}
+            whileTap={!loading ? { scale: 0.98 } : {}}
           >
-            {isVerifying ? (
+            {loading ? (
               <>
                 <Spinner />
-                <span>Verifying...</span>
+                <span>Signing in...</span>
               </>
             ) : (
               'Continue'
@@ -105,7 +128,7 @@ export default function Login() {
             ← Back to home
           </Link>
         </p>
-      </motion.div>
+      </motion.form>
     </div>
   )
 }

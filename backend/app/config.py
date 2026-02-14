@@ -4,10 +4,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
-
-# Base
+# Base (backend directory)
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Always load .env from backend directory, regardless of cwd when starting the app
+load_dotenv(BASE_DIR / ".env")
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 # JWT
@@ -15,5 +15,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", "studyconnect-dev-secret-change-in-producti
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-# Future MySQL (placeholder — do not use yet)
-# DATABASE_URL = os.getenv("DATABASE_URL", "mysql+aiomysql://user:pass@localhost:3306/studyconnect")
+# MySQL
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "mysql+pymysql://root:password@localhost:3306/studyconnect"
+)
