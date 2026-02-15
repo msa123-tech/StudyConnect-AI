@@ -3,6 +3,13 @@
  * Set VITE_API_URL in .env to override (e.g. VITE_API_URL=http://localhost:8000)
  */
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const WS_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/^http/, 'ws')
+
+function getAuthHeaders(token) {
+  const h = { 'Content-Type': 'application/json' }
+  if (token) h['Authorization'] = `Bearer ${token}`
+  return h
+}
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`
@@ -23,6 +30,14 @@ async function request(path, options = {}) {
   return res.json()
 }
 
+async function requestAuth(path, token, options = {}) {
+  return request(path, {
+    ...options,
+    headers: getAuthHeaders(token),
+    credentials: 'include',
+  })
+}
+
 export async function fetchColleges() {
   return request('/colleges')
 }
@@ -36,8 +51,44 @@ export async function login(email, password, collegeId) {
 }
 
 export async function fetchMe(token) {
-  return request('/auth/me', {
-    headers: { Authorization: `Bearer ${token}` },
-    credentials: 'include',
+  return requestAuth('/auth/me', token)
+}
+
+export async function fetchDashboard(token) {
+  return requestAuth('/dashboard', token)
+}
+
+export async function fetchCourse(courseId, token) {
+  return requestAuth(`/courses/${courseId}`, token)
+}
+
+export async function fetchCourseMessages(courseId, token, limit = 100) {
+  return requestAuth(`/courses/${courseId}/messages?limit=${limit}`, token)
+}
+
+export async function fetchGroup(groupId, token) {
+  return requestAuth(`/groups/${groupId}`, token)
+}
+
+export async function fetchGroupMessages(groupId, token, limit = 100) {
+  return requestAuth(`/groups/${groupId}/messages?limit=${limit}`, token)
+}
+
+export async function createGroup(courseId, name, token) {
+  return requestAuth(`/courses/${courseId}/groups`, token, {
+    method: 'POST',
+    body: JSON.stringify({ name }),
   })
+}
+
+export async function joinGroup(groupId, token) {
+  return requestAuth(`/groups/${groupId}/join`, token, {
+    method: 'POST',
+  })
+}
+
+export function getWsUrl(path, token) {
+  const base = WS_BASE.replace(/\/$/, '')
+  const p = path.startsWith('/') ? path : `/${path}`
+  return `${base}${p}${token ? `?token=${encodeURIComponent(token)}` : ''}`
 }

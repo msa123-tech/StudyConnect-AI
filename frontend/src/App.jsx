@@ -1,10 +1,15 @@
 import { Routes, Route, useLocation, useOutlet } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import ScrollToTop from './components/ScrollToTop'
+import ProtectedRoute from './components/ProtectedRoute'
+import { AuthProvider } from './contexts/AuthContext'
+import AuthenticatedShell from './layouts/AuthenticatedShell'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Contact from './pages/Contact'
 import Dashboard from './pages/Dashboard'
+import CoursePage from './pages/CoursePage'
+import GroupPage from './pages/GroupPage'
 
 function AnimatedLayout() {
   const location = useLocation()
@@ -28,14 +33,22 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-      <Routes>
-        <Route element={<AnimatedLayout />}>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/contact" element={<Contact />} />
-      </Route>
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route element={<AnimatedLayout />}>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AuthenticatedShell />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/courses/:courseId" element={<CoursePage />} />
+                <Route path="/groups/:groupId" element={<GroupPage />} />
+              </Route>
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
     </>
   )
 }

@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth_routes, college_routes
+from app.routers import auth_routes, college_routes, course_routes, dashboard_routes, websocket_routes
 
 app = FastAPI(
     title="StudyConnect API",
@@ -20,8 +20,15 @@ app.add_middleware(
 
 app.include_router(college_routes.router)
 app.include_router(auth_routes.router)
+app.include_router(dashboard_routes.router)
+app.include_router(course_routes.router)
+app.include_router(websocket_routes.router)
 
 
 @app.get("/")
 def root():
     return {"message": "StudyConnect backend running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

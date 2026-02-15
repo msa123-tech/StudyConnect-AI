@@ -1,17 +1,17 @@
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
-}
+};
 
 export default function Hero({ onOpenStudentsEducators }) {
   return (
     <section
-      className="relative overflow-hidden px-6 pt-28 pb-40 md:pt-36 md:pb-52 bg-cover bg-center bg-no-repeat"
+      className="relative overflow-hidden min-h-screen flex flex-col justify-center px-6 py-20 md:py-28 bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `linear-gradient(180deg, rgba(12, 18, 34, 0.88) 0%, rgba(12, 18, 34, 0.82) 50%, rgba(12, 18, 34, 0.9) 100%), url('/herobg.png')`,
-        backgroundColor: '#0c1222',
+        backgroundColor: "#0c1222",
       }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -19,13 +19,13 @@ export default function Hero({ onOpenStudentsEducators }) {
           className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-cyan-500/20 blur-3xl"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
         />
         <motion.div
           className="absolute top-1/2 -left-32 w-80 h-80 rounded-full bg-violet-500/15 blur-3xl"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.2, ease: 'easeOut' }}
+          transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
         />
       </div>
 
@@ -46,7 +46,8 @@ export default function Hero({ onOpenStudentsEducators }) {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.15 }}
         >
-          Join course groups, chat with classmates, and get AI help for your studies.
+          Join course groups, chat with classmates, and get AI help for your
+          studies.
         </motion.p>
         <motion.div
           className="mt-14"
@@ -68,5 +69,5 @@ export default function Hero({ onOpenStudentsEducators }) {
         </p>
       </div>
     </section>
-  )
+  );
 }
