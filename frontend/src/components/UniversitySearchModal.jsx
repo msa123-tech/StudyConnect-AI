@@ -30,12 +30,12 @@ export default function UniversitySearchModal({ onClose }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md"
-      style={{ backgroundColor: 'rgba(12, 18, 34, 0.85)' }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-xl"
+      style={{ backgroundColor: 'rgba(12, 18, 34, 0.88)' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -44,10 +44,10 @@ export default function UniversitySearchModal({ onClose }) {
       <motion.div
         className="w-full max-w-lg"
         onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, scale: 0.92 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.96 }}
-        transition={{ type: 'spring', damping: 28, stiffness: 260, mass: 0.8 }}
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 8 }}
+        transition={{ type: 'spring', damping: 26, stiffness: 280, mass: 0.9 }}
       >
         <UniversitySearchCard
           title="Enter your college"
@@ -55,12 +55,14 @@ export default function UniversitySearchModal({ onClose }) {
           placeholder="Search your university (e.g. GMU)"
           helperText="Use your official college email to continue. Only verified students can access StudyConnect."
           onSelect={handleSelect}
+          inModal
         />
         <motion.button
           type="button"
           onClick={onClose}
-          className="mt-4 w-full py-2.5 text-sm font-medium text-slate-500 hover:text-white transition-colors"
-          whileHover={{ opacity: 1 }}
+          className="mt-5 w-full py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors duration-200 rounded-lg hover:bg-white/5"
+          whileHover={{ y: -1 }}
+          whileTap={{ scale: 0.99 }}
         >
           Cancel
         </motion.button>

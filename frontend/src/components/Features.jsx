@@ -54,40 +54,40 @@ export default function Features() {
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
   return (
-    <section id="features" ref={ref} className="px-6 py-28 md:py-36 bg-white">
+    <section id="features" ref={ref} className="px-6 py-24 md:py-32 lg:py-40 bg-white">
       <div className="mx-auto max-w-6xl">
         <motion.h2
-          className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl text-center"
+          className="font-display text-3xl font-bold tracking-tight-display text-slate-900 sm:text-4xl lg:text-[2.75rem] text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           Built for how you learn
         </motion.h2>
         <motion.p
-          className="mt-5 text-lg text-slate-600 text-center max-w-2xl mx-auto leading-relaxed"
+          className="mt-6 text-lg text-slate-600 text-center max-w-2xl mx-auto leading-[1.7]"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, delay: 0.08 }}
+          transition={{ duration: 0.5, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
         >
           Everything you need to collaborate and succeed in your courses.
         </motion.p>
-        <div className="mt-20 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-24 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {features.map(({ title, description, icon, bg, iconColor, border }, i) => (
             <motion.div
               key={title}
-              className={`group rounded-2xl border-2 border-slate-100 bg-white p-8 shadow-soft transition-all duration-300 hover:shadow-soft-lg hover:-translate-y-1 ${border}`}
+              className={`group rounded-2xl border border-slate-100/80 bg-white p-8 sm:p-10 shadow-soft transition-all duration-300 hover:shadow-card-hover hover:-translate-y-2 hover:border-accent-200/50 ${border}`}
               variants={cardVariants}
               initial="hidden"
               animate={inView ? 'visible' : 'hidden'}
               custom={i}
-              whileHover={{ y: -4 }}
+              whileHover={{ y: -8 }}
             >
-              <div className={`rounded-xl ${bg} p-3.5 w-fit ${iconColor} group-hover:shadow-glow-sm transition-shadow duration-300`}>
+              <div className={`rounded-xl ${bg} p-4 w-fit ${iconColor} group-hover:shadow-glow-sm transition-all duration-300 group-hover:scale-105`}>
                 {icon}
               </div>
-              <h3 className="mt-6 text-xl font-semibold text-slate-900">{title}</h3>
-              <p className="mt-3 text-slate-600 leading-relaxed">{description}</p>
+              <h3 className="mt-7 font-display text-xl font-semibold tracking-tight text-slate-900">{title}</h3>
+              <p className="mt-4 text-slate-600 leading-[1.7]">{description}</p>
             </motion.div>
           ))}
         </div>

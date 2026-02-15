@@ -10,8 +10,8 @@ export default function CollegeSelector() {
   }
 
   return (
-    <section id="college" className="relative px-6 py-28 md:py-36 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-accent-50/30 to-slate-50 pointer-events-none" />
+    <section id="college" className="relative px-6 py-24 md:py-32 lg:py-40 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-accent-50/25 to-slate-50 pointer-events-none" />
       <div className="relative mx-auto max-w-2xl">
         <UniversitySearchCard
           title="Select Your University"

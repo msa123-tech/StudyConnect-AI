@@ -8,6 +8,11 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+      },
+      letterSpacing: {
+        'tight-display': '-0.02em',
+        'tighter-display': '-0.03em',
       },
       colors: {
         /* 60% - Dark base (hero, navbar, footer) - named "brand" to avoid Tailwind dark: conflict */
@@ -54,24 +59,37 @@ export default {
         },
       },
       boxShadow: {
-        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.06), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-        'soft-lg': '0 10px 40px -15px rgba(0, 0, 0, 0.1), 0 4px 20px -4px rgba(34, 211, 238, 0.15)',
+        'soft': '0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)',
+        'soft-lg': '0 4px 24px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04)',
+        'soft-xl': '0 8px 40px -12px rgba(0, 0, 0, 0.08), 0 4px 16px -4px rgba(34, 211, 238, 0.12)',
+        'card-hover': '0 12px 48px -16px rgba(0, 0, 0, 0.12), 0 4px 24px -8px rgba(34, 211, 238, 0.15)',
         'glow': '0 0 30px -5px rgba(34, 211, 238, 0.35), 0 0 60px -15px rgba(34, 211, 238, 0.2)',
         'glow-sm': '0 0 20px -5px rgba(34, 211, 238, 0.3)',
         'focus': '0 0 0 3px rgba(34, 211, 238, 0.4)',
+        'inner-glow': 'inset 0 1px 0 rgba(255, 255, 255, 0.06)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.25s ease-out',
-        'scale-in': 'scaleIn 0.25s ease-out',
+        'fade-in': 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        'slide-down': 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        'shimmer': 'shimmer 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(-6px)' },
+          '0%': { opacity: '0', transform: 'translateY(-8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         scaleIn: {
-          '0%': { opacity: '0', transform: 'scale(0.98)' },
+          '0%': { opacity: '0', transform: 'scale(0.96)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        slideDown: {
+          '0%': { opacity: '0', transform: 'translateY(-4px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        shimmer: {
+          '0%, 100%': { opacity: '0.5' },
+          '50%': { opacity: '1' },
         },
       },
     },
