@@ -24,3 +24,5 @@ class Course(Base):
     enrollments = relationship("Enrollment", back_populates="course")
     groups = relationship("Group", back_populates="course")
     course_messages = relationship("CourseMessage", back_populates="course")
+    files = relationship("File", back_populates="course")
+    voice_channels = relationship("VoiceChannel", back_populates="course", cascade="all, delete-orphan")

@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth_routes, college_routes, course_routes, dashboard_routes, websocket_routes
+from app.routers import auth_routes, college_routes, course_routes, dashboard_routes, websocket_routes, upload_routes, ai_routes
 
 app = FastAPI(
     title="StudyConnect API",
@@ -23,6 +23,8 @@ app.include_router(auth_routes.router)
 app.include_router(dashboard_routes.router)
 app.include_router(course_routes.router)
 app.include_router(websocket_routes.router)
+app.include_router(upload_routes.router)
+app.include_router(ai_routes.router)
 
 
 @app.get("/")
