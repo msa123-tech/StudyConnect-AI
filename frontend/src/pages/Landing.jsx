@@ -2,9 +2,12 @@ import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
-import About from '../components/About'
+import ProblemSection from '../components/ProblemSection'
+import IntroSection from '../components/IntroSection'
 import Features from '../components/Features'
-import LoginCallout from '../components/LoginCallout'
+import PlatformExperience from '../components/PlatformExperience'
+import FutureVision from '../components/FutureVision'
+import CTASection from '../components/CTASection'
 import Footer from '../components/Footer'
 import UniversitySearchModal from '../components/UniversitySearchModal'
 
@@ -15,10 +18,13 @@ export default function Landing() {
     <>
       <Navbar onOpenSelectCollege={() => setSearchModalOpen(true)} />
       <main>
-        <Hero onOpenStudentsEducators={() => setSearchModalOpen(true)} />
-        <About />
+        <Hero />
+        <ProblemSection />
+        <IntroSection onOpenSelectCollege={() => setSearchModalOpen(true)} />
         <Features />
-        <LoginCallout />
+        <PlatformExperience />
+        <FutureVision />
+        <CTASection onOpenSelectCollege={() => setSearchModalOpen(true)} />
       </main>
       <Footer />
       <AnimatePresence>
