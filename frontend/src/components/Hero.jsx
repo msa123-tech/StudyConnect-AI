@@ -1,93 +1,113 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef } from 'react'
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
-};
+}
 
 const stagger = {
   visible: {
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.05,
+      staggerChildren: 0.12,
+      delayChildren: 0.3,
     },
   },
-};
+}
 
-export default function Hero({ onOpenStudentsEducators }) {
+export default function Hero() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  })
+
+  // Parallax effects
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200])
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0])
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95])
+
   return (
-    <section
-      className="relative overflow-hidden min-h-screen flex flex-col justify-center px-6 py-24 md:py-32 bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `linear-gradient(180deg, rgba(12, 18, 34, 0.88) 0%, rgba(12, 18, 34, 0.82) 50%, rgba(12, 18, 34, 0.9) 100%), url('/herobg.png')`,
-        backgroundColor: "#0c1222",
-      }}
-    >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-40 -right-40 w-[28rem] h-[28rem] rounded-full bg-cyan-500/20 blur-[100px]"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        />
-        <motion.div
-          className="absolute top-1/2 -left-40 w-80 h-80 rounded-full bg-violet-500/15 blur-[100px]"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-1/3 w-64 h-64 rounded-full bg-accent-500/10 blur-[80px]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, delay: 0.3, ease: "easeOut" }}
-        />
-      </div>
-
+    <section ref={ref} className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden">
+      {/* Main content */}
       <motion.div
-        className="relative mx-auto max-w-[72rem] text-center"
+        className="relative z-10 mx-auto max-w-5xl text-center px-6"
         variants={stagger}
         initial="hidden"
         animate="visible"
+        style={{ y, opacity, scale }}
       >
-        <motion.h1
-          className="font-display text-4xl font-bold tracking-tight-display text-white sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] leading-[1.1]"
+        {/* Badge */}
+        <motion.div
           variants={fadeUp}
           transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="mb-8"
         >
-          AI-Powered Collaboration for College Students
-        </motion.h1>
-        <motion.p
-          className="mt-8 text-lg sm:text-xl md:text-[1.125rem] text-slate-300 max-w-2xl mx-auto leading-[1.7]"
-          variants={fadeUp}
-          transition={{ duration: 0.5, delay: 0.08 }}
-        >
-          Join course groups, chat with classmates, and get AI help for your
-          studies.
-        </motion.p>
-        <motion.div
-          className="mt-16"
-          variants={fadeUp}
-          transition={{ duration: 0.5, delay: 0.16 }}
-        >
-          <motion.button
-            type="button"
-            onClick={onOpenStudentsEducators}
-            className="inline-flex items-center justify-center rounded-xl bg-white px-10 py-4 text-base font-semibold text-slate-900 shadow-soft-lg transition-all duration-300 hover:shadow-[0_0_40px_-8px_rgba(255,255,255,0.35)] hover:scale-[1.02] active:scale-[0.98]"
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Enter your college
-          </motion.button>
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase glass-card text-accent-300 border border-accent-400/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
+            Powered by PatriotAI
+          </span>
         </motion.div>
-        <motion.p
-          className="mt-14 text-xs text-slate-500 tracking-wider uppercase"
+
+        {/* Headline */}
+        <motion.h1
+          className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95] text-white"
           variants={fadeUp}
-          transition={{ duration: 0.5, delay: 0.24 }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          Powered by PatriotAI
+          <span className="block">The Future of</span>
+          <span className="block text-gradient mt-2">Academic Collaboration</span>
+        </motion.h1>
+
+        {/* Subheadline */}
+        <motion.p
+          className="mt-8 text-lg sm:text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light"
+          variants={fadeUp}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          AI-powered study groups, course communities, and intelligent academic
+          assistance — built for university students.
         </motion.p>
+
+        {/* Stats row */}
+        <motion.div
+          className="mt-16 flex flex-wrap items-center justify-center gap-8 sm:gap-12"
+          variants={fadeUp}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {[
+            { value: 'AI-Powered', label: 'Study Assistance' },
+            { value: 'Course-Based', label: 'Communities' },
+            { value: 'University', label: 'Verified Access' },
+          ].map(({ value, label }) => (
+            <div key={label} className="text-center">
+              <p className="text-sm font-bold text-accent-400 tracking-wider uppercase">{value}</p>
+              <p className="mt-1 text-xs text-slate-500">{label}</p>
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        style={{ opacity: useTransform(scrollYProgress, [0, 0.3], [1, 0]) }}
+      >
+        <span className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-medium">Scroll to explore</span>
+        <motion.div
+          className="w-5 h-8 rounded-full border border-slate-600 flex items-start justify-center p-1"
+          initial={{ opacity: 0.5 }}
+        >
+          <motion.div
+            className="w-1 h-2 rounded-full bg-slate-400"
+            animate={{ y: [0, 12, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </motion.div>
       </motion.div>
     </section>
-  );
+  )
 }

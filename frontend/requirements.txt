@@ -14,3 +14,8 @@ autoprefixer>=10.4.17
 postcss>=8.4.35
 tailwindcss>=3.4.1
 vite>=5.1.0
+
+#3D development
+three>=0.162.0
+@react-three/fiber>=8.15.16
+@react-three/drei>=9.99.6
