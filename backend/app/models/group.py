@@ -20,3 +20,4 @@ class Group(Base):
     creator = relationship("User", foreign_keys=[created_by])
     members = relationship("GroupMember", back_populates="group")
     messages = relationship("GroupMessage", back_populates="group")
+    files = relationship("File", back_populates="group")

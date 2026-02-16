@@ -5,8 +5,8 @@ from typing import Annotated
 
 from app.database import get_db
 from app.dependencies import get_current_user
-from app.models import Course, CourseMessage, Enrollment, Group, GroupMember, GroupMessage, User
-from app.schemas.course_schema import CreateGroupRequest, CoursePageResponse, GroupResponse
+from app.models import Course, CourseMessage, Enrollment, Group, GroupMember, GroupMessage, User, VoiceChannel
+from app.schemas.course_schema import CreateGroupRequest, CoursePageResponse, GroupResponse, VoiceChannelResponse
 
 router = APIRouter(tags=["courses"])
 
@@ -26,17 +26,41 @@ def _verify_enrollment(db: Session, user_id: int, course_id: int, college_id: in
     return course
 
 
+def _verify_group_membership(db: Session, user_id: int, group_id: int, college_id: int) -> Group:
+    group = db.query(Group).filter(Group.id == group_id).first()
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+    course = _verify_enrollment(db, user_id, group.course_id, college_id)
+    member = db.query(GroupMember).filter(
+        GroupMember.group_id == group_id,
+        GroupMember.user_id == user_id,
+    ).first()
+    if not member:
+        raise HTTPException(status_code=403, detail="You are not a member of this group")
+    return group
+
+
 @router.get("/courses/{course_id}", response_model=CoursePageResponse)
 def get_course(
     course_id: int,
     payload: Annotated[dict, Depends(get_current_user)],
     db: Session = Depends(get_db),
 ):
-    """Return course info and groups. Requires enrollment and college match."""
+    """Return course info, groups, and voice channels. Requires enrollment and college match."""
     course = _verify_enrollment(
         db, payload["user_id"], course_id, payload["college_id"]
     )
     groups = db.query(Group).filter(Group.course_id == course_id).all()
+
+    # Ensure at least one voice channel (default per course for hackathon)
+    voice_channels = db.query(VoiceChannel).filter(VoiceChannel.course_id == course_id).all()
+    if not voice_channels:
+        default_channel = VoiceChannel(course_id=course_id, name="Study Room 1")
+        db.add(default_channel)
+        db.commit()
+        db.refresh(default_channel)
+        voice_channels = [default_channel]
+
     return CoursePageResponse(
         course_info={
             "id": course.id,
@@ -46,6 +70,7 @@ def get_course(
             "college_id": course.college_id,
         },
         groups=[GroupResponse(id=g.id, name=g.name, course_id=g.course_id) for g in groups],
+        voice_channels=[VoiceChannelResponse(id=vc.id, name=vc.name, course_id=vc.course_id) for vc in voice_channels],
     )
 
 

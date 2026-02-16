@@ -8,9 +8,13 @@ from app.models.course_message import CourseMessage
 from app.models.group import Group
 from app.models.group_member import GroupMember
 from app.models.group_message import GroupMessage
+from app.models.file import File
+from app.models.document_chunk import DocumentChunk
+from app.models.voice_channel import VoiceChannel
 
 __all__ = [
     "Base", "College", "User", "UserRole",
     "Course", "Enrollment", "CourseMessage",
     "Group", "GroupMember", "GroupMessage",
+    "File", "DocumentChunk", "VoiceChannel",
 ]
